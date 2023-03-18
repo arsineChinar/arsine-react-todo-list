@@ -13,7 +13,7 @@ function Task(props) {
 
     return (
         <Col xs={12} sm={6} md={4} lg={3}>
-            <Card className={styles.card} border="primary" >
+            <Card className={styles.card}  >
                 <Card.Body>
                     <div className={styles.actionCheckbox}>
                         <Form.Check className={styles.selectTask} />
