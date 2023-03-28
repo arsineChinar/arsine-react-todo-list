@@ -13,10 +13,13 @@ function Task(props) {
 
     return (
         <Col xs={12} sm={6} md={4} lg={3}>
-            <Card className={styles.card}  >
+            <Card className={styles.card}>
                 <Card.Body>
                     <div className={styles.actionCheckbox}>
-                        <Form.Check className={styles.selectTask} />
+                        <Form.Check 
+                        className={styles.selectTask} 
+                        onClick={()=>props.onTaskSelect(task.id)}
+                        />
                     </div>
                     <Card.Title>{task.title}</Card.Title>
                     <Card.Text>
@@ -26,7 +29,10 @@ function Task(props) {
                         <Button className={styles.editButton}>
                             <FontAwesomeIcon icon={faPenToSquare} />
                         </Button>
-                        <Button  className={styles.deleteButton}>
+                        <Button  
+                        className={styles.deleteButton}
+                        onClick={()=>props.onTaskDelete(task.id)}
+                        >
                             <FontAwesomeIcon icon={faTrashAlt} />
                         </Button>
                     </div>
