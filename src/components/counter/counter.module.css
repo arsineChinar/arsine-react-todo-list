@@ -1,0 +1,11 @@
+.counterBody{
+    margin-top: 200px;
+    text-align: center;
+}
+
+.counter{
+    font-size: 22px;
+}
+.counterBody button{
+    font-size: 25px;
+}
