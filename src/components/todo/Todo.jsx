@@ -127,7 +127,7 @@ class Todo extends Component {
                     })}
                 </Row>
                 <Button
-                    className={styles.deletSelected}
+                    className={styles.deleteSelected}
                     onClick={this.deleteSelectedTasks}
                     disabled={!this.state.selectedTasks.size}
                 >

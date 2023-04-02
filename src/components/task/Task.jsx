@@ -4,6 +4,7 @@ import {
     Card,
     Form
 } from "react-bootstrap";
+import {memo} from "react";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrashAlt, faPenToSquare } from "@fortawesome/free-solid-svg-icons";
 import styles from "./task.module.css"
@@ -43,4 +44,4 @@ function Task(props) {
     );
 }
 
-export default Task;
+export default memo(Task);
