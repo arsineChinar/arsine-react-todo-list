@@ -1,3 +1,9 @@
 .addButton{
     background-color: #26428b;
 }
+.deleteSelected{
+    position: fixed;
+    right: 50px;
+    bottom: 20px;
+    background-color: #26428b;
+}
