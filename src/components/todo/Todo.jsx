@@ -7,7 +7,6 @@ import {
     Form,
     Button
 } from "react-bootstrap";
-import { idGenerator } from "../../utils/helpers";
 import Task from "../task/Task";
 import ConfirmDialog from "../confirmDialog/ConfirmDialog";
 import styles from "./todo.module.css";
@@ -38,21 +37,38 @@ class Todo extends Component {
         if (!trimmedTitle) {
             return;
         }
+
+        const apiUrl = "http://localhost:3001/task";
+
         const newTask = {
-            id: idGenerator(),
             title: trimmedTitle
         };
-        const tasks = [...this.state.tasks];
-        tasks.push(newTask);
-        this.setState({
-            tasks,
-            newTaskTitle: '',
-        });
+
+        fetch(apiUrl, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(newTask),
+          })
+          .then((result)=>result.json())
+          .then((task) => {
+            const tasks = [...this.state.tasks];
+            tasks.push(task);
+            this.setState({
+                tasks,
+                newTaskTitle: '',
+            });
+          })
+          return;
+
+
+        
     };
 
     onTaskDelete = (taskId) => {
         const { selectedTasks, tasks } = this.state;
-        const newTasks = tasks.filter((task) => task.id !== taskId);
+        const newTasks = tasks.filter((task) => task._id !== taskId);
         const newState = { tasks: newTasks };
 
         if (selectedTasks.has(taskId)) {
@@ -79,7 +95,7 @@ class Todo extends Component {
         const { selectedTasks, tasks } = this.state;
 
         tasks.forEach((task) => {
-            if (!selectedTasks.has(task.id)) {
+            if (!selectedTasks.has(task._id)) {
                 newTasks.push(task);
             }
         });
@@ -133,7 +149,7 @@ class Todo extends Component {
                         return (
                             <Task
                                 data={task}
-                                key={task.id}
+                                key={task._id}
                                 onTaskDelete={this.onTaskDelete}
                                 onTaskSelect={this.onTaskSelect}
                             />
