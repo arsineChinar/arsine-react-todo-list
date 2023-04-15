@@ -19,7 +19,7 @@ function Task(props) {
                     <div className={styles.actionCheckbox}>
                         <Form.Check 
                         className={styles.selectTask} 
-                        onClick={()=>props.onTaskSelect(task.id)}
+                        onClick={()=>props.onTaskSelect(task._id)}
                         />
                     </div>
                     <Card.Title>{task.title}</Card.Title>
@@ -32,7 +32,7 @@ function Task(props) {
                         </Button>
                         <Button  
                         className={styles.deleteButton}
-                        onClick={()=>props.onTaskDelete(task.id)}
+                        onClick={()=>props.onTaskDelete(task._id)}
                         >
                             <FontAwesomeIcon icon={faTrashAlt} />
                         </Button>
