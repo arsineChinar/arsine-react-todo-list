@@ -9,6 +9,7 @@ import {
 } from "react-bootstrap";
 import Task from "../task/Task";
 import ConfirmDialog from "../confirmDialog/ConfirmDialog";
+import DeleteSelected from "../deleteSelected/DeleteSelected";
 import styles from "./todo.module.css";
 
 function Todo() {
@@ -16,12 +17,12 @@ function Todo() {
     const [tasks, setTasks] = useState([]);
     const [newTaskTitle, setNewTaskTitle] = useState("");
     const [selectedTasks, setSelectedTasks] = useState(new Set());
-    const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false);
+    const [taskToDelete, setTaskToDelete] = useState(null);
 
 
     const handleInputChange = (event) => {
         setNewTaskTitle(event.target.value);
-      };
+    };
 
     const handleInputKeyDown = (event) => {
         if (event.key === "Enter") {
@@ -44,23 +45,23 @@ function Todo() {
         fetch(apiUrl, {
             method: "POST",
             headers: {
-              "Content-Type": "application/json",
+                "Content-Type": "application/json",
             },
             body: JSON.stringify(newTask),
-          })
+        })
             .then((result) => result.json())
             .then((task) => {
-              const tasksCopy = [...tasks];
-              tasksCopy.push(task);
-              setTasks(tasksCopy);
-              setNewTaskTitle("");
+                const tasksCopy = [...tasks];
+                tasksCopy.push(task);
+                setTasks(tasksCopy);
+                setNewTaskTitle("");
             });
     };
 
     const onTaskDelete = (taskId) => {
         const newTasks = tasks.filter((task) => task._id !== taskId);
         setTasks(newTasks);
-        if (selectedTasks.has(taskId)){
+        if (selectedTasks.has(taskId)) {
             const newSelectedTasks = new Set(selectedTasks);
             newSelectedTasks.delete(taskId);
             setSelectedTasks(newSelectedTasks);
@@ -70,30 +71,24 @@ function Todo() {
     const onTaskSelect = (taskId) => {
         const selectedTasksCopy = new Set(selectedTasks);
         if (selectedTasksCopy.has(taskId)) {
-          selectedTasksCopy.delete(taskId);
+            selectedTasksCopy.delete(taskId);
         } else {
-          selectedTasksCopy.add(taskId);
+            selectedTasksCopy.add(taskId);
         }
         setSelectedTasks(selectedTasksCopy);
-      };
+    };
 
-      const deleteSelectedTasks = () => {
+    const deleteSelectedTasks = () => {
         const newTasks = [];
-    
         tasks.forEach((task) => {
-          if (!selectedTasks.has(task._id)) {
-            newTasks.push(task);
-          }
+            if (!selectedTasks.has(task._id)) {
+                newTasks.push(task);
+            }
         });
         setTasks(newTasks);
         setSelectedTasks(new Set());
-        setIsConfirmDialogOpen(false);
-      };
-    
-
-    const toggleConfirmDialog = () => {
-        setIsConfirmDialogOpen(!isConfirmDialogOpen);
     };
+
 
     const isAddNewTaskButtonDisabled = !newTaskTitle.trim();
 
@@ -126,26 +121,27 @@ function Todo() {
                         <Task
                             data={task}
                             key={task._id}
-                            onTaskDelete={onTaskDelete}
+                            onTaskDelete={setTaskToDelete}
                             onTaskSelect={onTaskSelect}
                         />
                     );
                 })}
             </Row>
-            <Button
-                className={styles.deleteSelected}
-                onClick={toggleConfirmDialog}
+            <DeleteSelected
                 disabled={!selectedTasks.size}
-            >
-                Delete Selected
-            </Button>
-            {isConfirmDialogOpen &&
+                tasksCount={selectedTasks.size}
+                onSubmit={deleteSelectedTasks}
+            />
+            {taskToDelete && (
                 <ConfirmDialog
-                    tasksCount={selectedTasks.size}
-                    onCancel={toggleConfirmDialog}
-                    onSubmit={deleteSelectedTasks}
+                    tasksCount={1}
+                    onCancel={() => setTaskToDelete(null)}
+                    onSubmit={() => {
+                        onTaskDelete(taskToDelete);
+                        setTaskToDelete(null);
+                    }}
                 />
-            }
+            )}
         </Container>
     );
 
