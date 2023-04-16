@@ -1,27 +1,33 @@
-const apiUrl = "http://localhost:3001";
+const taskApiUrl = process.env.REACT_APP_API_URL + "/task";
 
-class TaskApi{
-    
-    get(){
+export default class TaskApi {
 
-    }
-
-    post(task){
-        fetch(apiUrl + "/task", {
-            method: "POST",
+    #request(method, body = null) {
+        const params = {
+            method: method,
             headers: {
                 "Content-Type": "application/json",
             },
-            body: JSON.stringify(newTask),
-        })
-            .then((result) => result.json());       
+        };
+        if (body !== null) {
+            params.body = JSON.stringify(body);
+        }
+        return fetch(taskApiUrl, params).then((result) => result.json());
     }
 
-    put(){
+    getAll() {
+        return this.#request("GET");
+    }
+
+    add(task) {
+        return this.#request("POST", task);
+    }
+
+    update() {
 
     }
 
-    delete(){
+    delete() {
 
     }
 }

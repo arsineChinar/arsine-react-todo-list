@@ -1,19 +1,12 @@
 import { useState, useEffect } from "react";
-import {
-    Container,
-    Row,
-    Col,
-    InputGroup,
-    Form,
-    Button
-} from "react-bootstrap";
 import Task from "../task/Task";
 import ConfirmDialog from "../confirmDialog/ConfirmDialog";
 import DeleteSelected from "../deleteSelected/DeleteSelected";
+import TaskApi from "../../api/taskApi";
+import { Container, Row, Col, InputGroup, Form, Button } from "react-bootstrap";
 import styles from "./todo.module.css";
 
-
-const apiUrl = "http://localhost:3001";
+const taskApi = new TaskApi();
 
 function Todo() {
 
@@ -23,16 +16,9 @@ function Todo() {
     const [taskToDelete, setTaskToDelete] = useState(null);
 
     useEffect(() => {
-        fetch(apiUrl + "/task", {
-            method: "GET",
-            headers: {
-                "Content-Type": "application/json",
-            },
-        })
-            .then((result) => result.json())
-            .then((tasks) => {
-                setTasks(tasks);
-            });
+        taskApi.getAll().then((tasks) => {
+            setTasks(tasks);
+        });
     }, []);
 
     const handleInputChange = (event) => {
@@ -55,14 +41,7 @@ function Todo() {
             title: trimmedTitle
         };
 
-        fetch(apiUrl + "/task", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify(newTask),
-        })
-            .then((result) => result.json())
+        taskApi.add(newTask)
             .then((task) => {
                 const tasksCopy = [...tasks];
                 tasksCopy.push(task);
