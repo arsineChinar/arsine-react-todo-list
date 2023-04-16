@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
     Container,
     Row,
@@ -12,6 +12,9 @@ import ConfirmDialog from "../confirmDialog/ConfirmDialog";
 import DeleteSelected from "../deleteSelected/DeleteSelected";
 import styles from "./todo.module.css";
 
+
+const apiUrl = "http://localhost:3001";
+
 function Todo() {
 
     const [tasks, setTasks] = useState([]);
@@ -19,6 +22,18 @@ function Todo() {
     const [selectedTasks, setSelectedTasks] = useState(new Set());
     const [taskToDelete, setTaskToDelete] = useState(null);
 
+    useEffect(() => {
+        fetch(apiUrl + "/task", {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+            },
+        })
+            .then((result) => result.json())
+            .then((tasks) => {
+                setTasks(tasks);
+            });
+    }, []);
 
     const handleInputChange = (event) => {
         setNewTaskTitle(event.target.value);
@@ -36,13 +51,11 @@ function Todo() {
             return;
         }
 
-        const apiUrl = "http://localhost:3001/task";
-
         const newTask = {
             title: trimmedTitle
         };
 
-        fetch(apiUrl, {
+        fetch(apiUrl + "/task", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
