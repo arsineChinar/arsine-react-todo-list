@@ -3,6 +3,7 @@ import Task from "../task/Task";
 import ConfirmDialog from "../confirmDialog/ConfirmDialog";
 import DeleteSelected from "../deleteSelected/DeleteSelected";
 import TaskApi from "../../api/taskApi";
+import TaskModal from "../taskModal/TaskModal";
 import { Container, Row, Col, InputGroup, Form, Button } from "react-bootstrap";
 import styles from "./todo.module.css";
 
@@ -11,9 +12,9 @@ const taskApi = new TaskApi();
 function Todo() {
 
     const [tasks, setTasks] = useState([]);
-    const [newTaskTitle, setNewTaskTitle] = useState("");
     const [selectedTasks, setSelectedTasks] = useState(new Set());
     const [taskToDelete, setTaskToDelete] = useState(null);
+    const [isAddTaskModalOpen, setIsAddTaskModalOpen] = useState(false);
 
     useEffect(() => {
         taskApi.getAll().then((tasks) => {
@@ -46,7 +47,7 @@ function Todo() {
                 const tasksCopy = [...tasks];
                 tasksCopy.push(task);
                 setTasks(tasksCopy);
-                setNewTaskTitle("");
+                //setNewTaskTitle("");
             });
     };
 
@@ -81,7 +82,7 @@ function Todo() {
         setSelectedTasks(new Set());
     };
 
-
+    let newTaskTitle="";
     const isAddNewTaskButtonDisabled = !newTaskTitle.trim();
 
     return (
@@ -89,21 +90,13 @@ function Todo() {
         <Container>
             <Row className="justify-content-center">
                 <Col xs="12" sm="8" md="6">
-                    <InputGroup className="mb-3 mt-4">
-                        <Form.Control
-                            placeholder="Task Title"
-                            onChange={handleInputChange}
-                            onKeyDown={handleInputKeyDown}
-                            value={newTaskTitle}
-                        />
                         <Button
                             className={styles.addButton}
                             onClick={addNewTask}
                             disabled={isAddNewTaskButtonDisabled}
                         >
-                            Add
-                        </Button>
-                    </InputGroup>
+                            Add new task
+                        </Button>       
                 </Col>
             </Row>
 
