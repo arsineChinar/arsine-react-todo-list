@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import { Modal, Button } from "react-bootstrap";
 import styles from "./confirmDialog.module.css";
 
@@ -33,5 +34,11 @@ function ConfirmDialog(props) {
     </Modal>
   );
 }
+
+ConfirmDialog.propTypes = {
+  tasksCount: PropTypes.number.isRequired,
+  onCancel: PropTypes.func.isRequired,
+  onSubmit: PropTypes.func.isRequired
+};
 
 export default ConfirmDialog;

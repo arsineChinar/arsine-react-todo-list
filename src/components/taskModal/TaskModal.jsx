@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
-import { Col, InputGroup, Form, Button, Modal } from "react-bootstrap";
+import PropTypes from 'prop-types';
+import DatePicker from 'react-datepicker';
+import { Form, Button, Modal } from "react-bootstrap";
 import styles from "./taskModal.module.css";
 
 
@@ -7,7 +9,25 @@ function TaskModal(props) {
 
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
-    const [date, setDate] = useState("");
+    const [date, setDate] = useState(new Date());
+    const [isTitleValid, setIsTitleValid] = useState(false);
+
+    const saveTask = () => {
+        const newTask = {
+            title: title.trim(),
+            description: description.trim(),
+            date: date.toISOString().slice(0, 10)
+          };
+            props.onSave(newTask);
+    };
+
+    const onTitleChange = (event) => {
+        const {value} = event.target;
+        const trimmedTitle = value.trim();
+    
+        setIsTitleValid(!!trimmedTitle);
+        setTitle(value);
+    };
 
     return (
 
@@ -22,10 +42,33 @@ function TaskModal(props) {
                 </Modal.Title>
             </Modal.Header>
             <Modal.Body >
-                <div className="d-flex justify-content-evenly">
+                <Form.Control
+                    className={`${!isTitleValid ? styles.invalid : ''} mb-3`}
+                    placeholder="Title"
+                    value={title}
+                    onChange={onTitleChange}
+                />
+                <Form.Control
+                    className='mb-3'
+                    as="textarea"
+                    placeholder="Description"
+                    rows={5}
+                    value={description}
+                    onChange={(event) => setDescription(event.target.value)}
+                />
+                <h6>Deadline:</h6>
+                <DatePicker
+                    showIcon
+                    selected={date}
+                    onChange={setDate}
+                />
+            </Modal.Body>
+            <Modal.Footer >
+                <div className="d-flex justify-content-evenly gap-3">
                     <Button
                         className={styles.saveButton}
-                        onClick={props.onSubmit}
+                        onClick={saveTask}
+                        disabled={!isTitleValid}
                     >
                         Save
                     </Button>
@@ -36,10 +79,14 @@ function TaskModal(props) {
                         Cancel
                     </Button>
                 </div>
-            </Modal.Body>
+            </Modal.Footer>
         </Modal>
     );
-
 }
+
+TaskModal.propTypes = {
+    onCancel: PropTypes.func.isRequired,
+    onSave: PropTypes.func.isRequired
+};
 
 export default TaskModal;

@@ -3,5 +3,9 @@
 }
 
 .cancelButton{
-    background-color: #5d93a5;
+    background-color: #3e636f;
+}
+
+.invalid, .invalid:focus {
+    outline: 1px solid red;
 }

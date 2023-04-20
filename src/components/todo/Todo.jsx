@@ -1,10 +1,11 @@
 import { useState, useEffect } from "react";
+import { ToastContainer, toast } from "react-toastify";
 import Task from "../task/Task";
 import ConfirmDialog from "../confirmDialog/ConfirmDialog";
 import DeleteSelected from "../deleteSelected/DeleteSelected";
 import TaskApi from "../../api/taskApi";
 import TaskModal from "../taskModal/TaskModal";
-import { Container, Row, Col, InputGroup, Form, Button } from "react-bootstrap";
+import { Container, Row, Col, Button } from "react-bootstrap";
 import styles from "./todo.module.css";
 
 const taskApi = new TaskApi();
@@ -23,31 +24,27 @@ function Todo() {
     }, []);
 
     const handleInputChange = (event) => {
-        setNewTaskTitle(event.target.value);
+        // setNewTaskTitle(event.target.value);
     };
 
     const handleInputKeyDown = (event) => {
         if (event.key === "Enter") {
-            addNewTask();
+            onAddNewTask();
         }
     };
 
-    const addNewTask = () => {
-        const trimmedTitle = newTaskTitle.trim();
-        if (!trimmedTitle) {
-            return;
-        }
-
-        const newTask = {
-            title: trimmedTitle
-        };
+    const onAddNewTask = (newTask) => {
 
         taskApi.add(newTask)
             .then((task) => {
                 const tasksCopy = [...tasks];
                 tasksCopy.push(task);
                 setTasks(tasksCopy);
-                //setNewTaskTitle("");
+                setIsAddTaskModalOpen(false);
+                toast.info('The task has been added successfully!');
+            })
+            .catch((err) => {
+                toast.error(err.message)
             });
     };
 
@@ -82,21 +79,19 @@ function Todo() {
         setSelectedTasks(new Set());
     };
 
-    let newTaskTitle="";
-    const isAddNewTaskButtonDisabled = !newTaskTitle.trim();
+    let newTaskTitle = "";
 
     return (
 
         <Container>
-            <Row className="justify-content-center">
-                <Col xs="12" sm="8" md="6">
-                        <Button
-                            className={styles.addButton}
-                            onClick={addNewTask}
-                            disabled={isAddNewTaskButtonDisabled}
-                        >
-                            Add new task
-                        </Button>       
+            <Row className="justify-content-center m-3">
+                <Col className={styles.addTaskButton}>
+                    <Button
+                        className={styles.addButton}
+                        onClick={() => setIsAddTaskModalOpen(true)}
+                    >
+                        Add new task
+                    </Button>
                 </Col>
             </Row>
 
@@ -127,6 +122,25 @@ function Todo() {
                     }}
                 />
             )}
+            {
+                isAddTaskModalOpen &&
+                <TaskModal
+                    onCancel={() => setIsAddTaskModalOpen(false)}
+                    onSave={onAddNewTask}
+                />
+            }
+            <ToastContainer
+                position="bottom-left"
+                autoClose={3000}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick={false}
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+                theme="colored"
+            />
         </Container>
     );
 
