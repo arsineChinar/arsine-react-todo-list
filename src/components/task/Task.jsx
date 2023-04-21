@@ -1,10 +1,6 @@
-import {
-    Col,
-    Button,
-    Card,
-    Form
-} from "react-bootstrap";
 import {memo} from "react";
+import PropTypes from 'prop-types';
+import { Col, Button, Card, Form} from "react-bootstrap";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrashAlt, faPenToSquare } from "@fortawesome/free-solid-svg-icons";
 import styles from "./task.module.css"
@@ -19,7 +15,7 @@ function Task(props) {
                     <div className={styles.actionCheckbox}>
                         <Form.Check 
                         className={styles.selectTask} 
-                        onClick={()=>props.onTaskSelect(task.id)}
+                        onClick={()=>props.onTaskSelect(task._id)}
                         />
                     </div>
                     <Card.Title>{task.title}</Card.Title>
@@ -32,7 +28,7 @@ function Task(props) {
                         </Button>
                         <Button  
                         className={styles.deleteButton}
-                        onClick={()=>props.onTaskDelete(task.id)}
+                        onClick={()=>props.onTaskDelete(task._id)}
                         >
                             <FontAwesomeIcon icon={faTrashAlt} />
                         </Button>
@@ -43,5 +39,11 @@ function Task(props) {
         </Col>
     );
 }
+
+Task.propTypes = {
+    data: PropTypes.object.isRequired,
+    onTaskDelete: PropTypes.func.isRequired,
+    onTaskSelect: PropTypes.func.isRequired,
+    };
 
 export default memo(Task);

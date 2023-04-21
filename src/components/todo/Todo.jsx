@@ -1,142 +1,149 @@
-import { Component } from "react";
-import {
-    Container,
-    Row,
-    Col,
-    InputGroup,
-    Form,
-    Button
-} from "react-bootstrap";
-import { idGenerator } from "../../utils/helpers";
+import { useState, useEffect } from "react";
+import { ToastContainer, toast } from "react-toastify";
 import Task from "../task/Task";
 import ConfirmDialog from "../confirmDialog/ConfirmDialog";
+import DeleteSelected from "../deleteSelected/DeleteSelected";
+import TaskApi from "../../api/taskApi";
+import TaskModal from "../taskModal/TaskModal";
+import { Container, Row, Col, Button } from "react-bootstrap";
 import styles from "./todo.module.css";
 
-class Todo extends Component {
-    state = {
-        tasks: [],
-        newTaskTitle: "",
-        selectedTasks: new Set(),
-    };
+const taskApi = new TaskApi();
 
-    handleInputChange = (event) => {
-        const newTaskTitle = event.target.value;
-        this.setState({
-            newTaskTitle
+function Todo() {
+
+    const [tasks, setTasks] = useState([]);
+    const [selectedTasks, setSelectedTasks] = useState(new Set());
+    const [taskToDelete, setTaskToDelete] = useState(null);
+    const [isAddTaskModalOpen, setIsAddTaskModalOpen] = useState(false);
+
+    useEffect(() => {
+        taskApi.getAll().then((tasks) => {
+            setTasks(tasks);
         });
+    }, []);
+
+    const handleInputChange = (event) => {
+        // setNewTaskTitle(event.target.value);
     };
 
-    handleInputKeyDown = (event) => {
+    const handleInputKeyDown = (event) => {
         if (event.key === "Enter") {
-            this.addNewTask();
+            onAddNewTask();
         }
     };
 
-    addNewTask = () => {
-        const trimmedTitle = this.state.newTaskTitle.trim();
-        if (!trimmedTitle) {
-            return;
-        }
-        const newTask = {
-            id: idGenerator(),
-            title: trimmedTitle
-        };
-        const tasks = [...this.state.tasks];
-        tasks.push(newTask);
-        this.setState({
-            tasks,
-            newTaskTitle: '',
-        });
+    const onAddNewTask = (newTask) => {
+
+        taskApi.add(newTask)
+            .then((task) => {
+                const tasksCopy = [...tasks];
+                tasksCopy.push(task);
+                setTasks(tasksCopy);
+                setIsAddTaskModalOpen(false);
+                toast.info('The task has been added successfully!');
+            })
+            .catch((err) => {
+                toast.error(err.message)
+            });
     };
 
-    onTaskDelete = (taskId) => {
-        const { selectedTasks, tasks } = this.state;
-        const newTasks = tasks.filter((task) => task.id !== taskId);
-        const newState = { tasks: newTasks };
-
+    const onTaskDelete = (taskId) => {
+        const newTasks = tasks.filter((task) => task._id !== taskId);
+        setTasks(newTasks);
         if (selectedTasks.has(taskId)) {
             const newSelectedTasks = new Set(selectedTasks);
             newSelectedTasks.delete(taskId);
-            newState.selectedTasks = newSelectedTasks;
+            setSelectedTasks(newSelectedTasks);
         }
-        this.setState(newState);
     };
 
-    onTaskSelect = (taskId) => {
-        const selectedTasks = new Set(this.state.selectedTasks);
-        if (selectedTasks.has(taskId)) {
-            selectedTasks.delete(taskId);
+    const onTaskSelect = (taskId) => {
+        const selectedTasksCopy = new Set(selectedTasks);
+        if (selectedTasksCopy.has(taskId)) {
+            selectedTasksCopy.delete(taskId);
+        } else {
+            selectedTasksCopy.add(taskId);
         }
-        else {
-            selectedTasks.add(taskId);
-        }
-        this.setState({ selectedTasks });
+        setSelectedTasks(selectedTasksCopy);
     };
 
-    deleteSelectedTasks = () => {
+    const deleteSelectedTasks = () => {
         const newTasks = [];
-        const { selectedTasks, tasks } = this.state;
-
         tasks.forEach((task) => {
-            if (!selectedTasks.has(task.id)) {
+            if (!selectedTasks.has(task._id)) {
                 newTasks.push(task);
             }
         });
-        this.setState({
-            tasks: newTasks,
-            selectedTasks: new Set(),
-        });
+        setTasks(newTasks);
+        setSelectedTasks(new Set());
     };
 
-    render() {
+    let newTaskTitle = "";
 
-        const isAddNewTaskButtonDisabled = !this.state.newTaskTitle.trim();
+    return (
 
-        return (
-            <Container>
-                <Row className="justify-content-center">
-                    <Col xs="12" sm="8" md="6">
-                        <InputGroup className="mb-3 mt-4">
-                            <Form.Control
-                                placeholder="Task Title"
-                                onChange={this.handleInputChange}
-                                onKeyDown={this.handleInputKeyDown}
-                                value={this.state.newTaskTitle}
-                            />
-                            <Button
-                                className={styles.addButton}
-                                onClick={this.addNewTask}
-                                disabled={isAddNewTaskButtonDisabled}
-                            >
-                                Add
-                            </Button>
-                        </InputGroup>
-                    </Col>
-                </Row>
+        <Container>
+            <Row className="justify-content-center m-3">
+                <Col className={styles.addTaskButton}>
+                    <Button
+                        className={styles.addButton}
+                        onClick={() => setIsAddTaskModalOpen(true)}
+                    >
+                        Add new task
+                    </Button>
+                </Col>
+            </Row>
 
-                <Row>
-                    {this.state.tasks.map((task) => {
-                        return (
-                            <Task
-                                data={task}
-                                key={task.id}
-                                onTaskDelete={this.onTaskDelete}
-                                onTaskSelect={this.onTaskSelect}
-                            />
-                        );
-                    })}
-                </Row>
-                <Button
-                    className={styles.deleteSelected}
-                    onClick={this.deleteSelectedTasks}
-                    disabled={!this.state.selectedTasks.size}
-                >
-                    Delete Selected
-                </Button>
-                <ConfirmDialog />
-            </Container>
-        );
-    }
+            <Row>
+                {tasks.map((task) => {
+                    return (
+                        <Task
+                            data={task}
+                            key={task._id}
+                            onTaskDelete={setTaskToDelete}
+                            onTaskSelect={onTaskSelect}
+                        />
+                    );
+                })}
+            </Row>
+            <DeleteSelected
+                disabled={!selectedTasks.size}
+                tasksCount={selectedTasks.size}
+                onSubmit={deleteSelectedTasks}
+            />
+            {taskToDelete && (
+                <ConfirmDialog
+                    tasksCount={1}
+                    onCancel={() => setTaskToDelete(null)}
+                    onSubmit={() => {
+                        onTaskDelete(taskToDelete);
+                        setTaskToDelete(null);
+                    }}
+                />
+            )}
+            {
+                isAddTaskModalOpen &&
+                <TaskModal
+                    onCancel={() => setIsAddTaskModalOpen(false)}
+                    onSave={onAddNewTask}
+                />
+            }
+            <ToastContainer
+                position="bottom-left"
+                autoClose={3000}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick={false}
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+                theme="colored"
+            />
+        </Container>
+    );
+
 }
 
 export default Todo;

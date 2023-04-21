@@ -1,0 +1,11 @@
+.saveButton{
+    background-color: #22448c;
+}
+
+.cancelButton{
+    background-color: #3e636f;
+}
+
+.invalid, .invalid:focus {
+    outline: 1px solid red;
+}
