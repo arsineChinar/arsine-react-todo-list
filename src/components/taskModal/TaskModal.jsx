@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import PropTypes from 'prop-types';
 import DatePicker from 'react-datepicker';
+import { formatDate } from "../../utils/helpers";
 import { Form, Button, Modal } from "react-bootstrap";
 import styles from "./taskModal.module.css";
 
@@ -16,7 +17,7 @@ function TaskModal(props) {
         const newTask = {
             title: title.trim(),
             description: description.trim(),
-            date: date.toISOString().slice(0, 10)
+            date: formatDate(date)
           };
             props.onSave(newTask);
     };

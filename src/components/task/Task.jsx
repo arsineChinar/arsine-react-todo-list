@@ -1,5 +1,6 @@
 import {memo} from "react";
 import PropTypes from 'prop-types';
+import { formatDate } from "../../utils/helpers";
 import { Col, Button, Card, Form} from "react-bootstrap";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrashAlt, faPenToSquare } from "@fortawesome/free-solid-svg-icons";
@@ -19,9 +20,10 @@ function Task(props) {
                         />
                     </div>
                     <Card.Title>{task.title}</Card.Title>
-                    <Card.Text>
-                        Description
-                    </Card.Text>
+                    <Card.Text>{task.description}</Card.Text>
+                    <Card.Text>Status: {task.status}</Card.Text>
+                    <Card.Text>Created At: {formatDate(task.created_at)}</Card.Text>
+                    <Card.Text>Deadline: {formatDate(task.date)}</Card.Text>
                     <div className={styles.actionButtons}>
                         <Button className={styles.editButton}>
                             <FontAwesomeIcon icon={faPenToSquare} />
