@@ -1,7 +1,7 @@
-import {memo} from "react";
+import { memo } from "react";
 import PropTypes from 'prop-types';
 import { formatDate } from "../../utils/helpers";
-import { Col, Button, Card, Form} from "react-bootstrap";
+import { Col, Button, Card, Form } from "react-bootstrap";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrashAlt, faPenToSquare } from "@fortawesome/free-solid-svg-icons";
 import styles from "./task.module.css"
@@ -14,13 +14,18 @@ function Task(props) {
             <Card className={styles.card}>
                 <Card.Body>
                     <div className={styles.actionCheckbox}>
-                        <Form.Check 
-                        className={styles.selectTask} 
-                        onClick={()=>props.onTaskSelect(task._id)}
+                        <Form.Check
+                            className={styles.selectTask}
+                            onChange={() => props.onTaskSelect(task._id)}
+                            checked={props.checked}
                         />
                     </div>
-                    <Card.Title>{task.title}</Card.Title>
-                    <Card.Text>{task.description}</Card.Text>
+                    <Card.Title className={styles.textElipsis} >
+                        {task.title}
+                    </Card.Title>
+                    <Card.Text className={styles.textElipsis}>
+                        {task.description}
+                    </Card.Text>
                     <Card.Text>Status: {task.status}</Card.Text>
                     <Card.Text>Created At: {formatDate(task.created_at)}</Card.Text>
                     <Card.Text>Deadline: {formatDate(task.date)}</Card.Text>
@@ -28,9 +33,9 @@ function Task(props) {
                         <Button className={styles.editButton}>
                             <FontAwesomeIcon icon={faPenToSquare} />
                         </Button>
-                        <Button  
-                        className={styles.deleteButton}
-                        onClick={()=>props.onTaskDelete(task._id)}
+                        <Button
+                            className={styles.deleteButton}
+                            onClick={() => props.onTaskDelete(task._id)}
                         >
                             <FontAwesomeIcon icon={faTrashAlt} />
                         </Button>
@@ -46,6 +51,7 @@ Task.propTypes = {
     data: PropTypes.object.isRequired,
     onTaskDelete: PropTypes.func.isRequired,
     onTaskSelect: PropTypes.func.isRequired,
-    };
+    checked: PropTypes.bool.isRequired,
+};
 
 export default memo(Task);

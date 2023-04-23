@@ -23,15 +23,6 @@ function Todo() {
         });
     }, []);
 
-    const handleInputChange = (event) => {
-        // setNewTaskTitle(event.target.value);
-    };
-
-    const handleInputKeyDown = (event) => {
-        if (event.key === "Enter") {
-            onAddNewTask();
-        }
-    };
 
     const onAddNewTask = (newTask) => {
 
@@ -49,14 +40,23 @@ function Todo() {
     };
 
     const onTaskDelete = (taskId) => {
-        const newTasks = tasks.filter((task) => task._id !== taskId);
-        setTasks(newTasks);
-        if (selectedTasks.has(taskId)) {
-            const newSelectedTasks = new Set(selectedTasks);
-            newSelectedTasks.delete(taskId);
-            setSelectedTasks(newSelectedTasks);
-        }
+        taskApi
+            .delete(taskId)
+            .then(() => {
+                const newTasks = tasks.filter((task) => task._id !== taskId);
+                setTasks(newTasks);
+                if (selectedTasks.has(taskId)) {
+                    const newSelectedTasks = new Set(selectedTasks);
+                    newSelectedTasks.delete(taskId);
+                    setSelectedTasks(newSelectedTasks);
+                }
+                toast.info('The task has been deleted successfully!');
+            })
+            .catch((err) => {
+                toast.error(err.message);
+            });
     };
+
 
     const onTaskSelect = (taskId) => {
         const selectedTasksCopy = new Set(selectedTasks);
@@ -69,28 +69,61 @@ function Todo() {
     };
 
     const deleteSelectedTasks = () => {
-        const newTasks = [];
-        tasks.forEach((task) => {
-            if (!selectedTasks.has(task._id)) {
-                newTasks.push(task);
-            }
-        });
-        setTasks(newTasks);
+        taskApi
+            .deleteMany([...selectedTasks])
+            .then(() => {
+                const newTasks = [];
+                const deletedTasksCount = selectedTasks.size;
+                tasks.forEach((task) => {
+                    if (!selectedTasks.has(task._id)) {
+                        newTasks.push(task);
+                    }
+                });
+                setTasks(newTasks);
+                setSelectedTasks(new Set());
+                toast.info(`${deletedTasksCount} tasks have been deleted successfully!`);
+            })
+            .catch((err) => {
+                toast.error(err.message);
+            });
+    };
+
+    const selectAllTasks = () => {
+        const taskIds = tasks.map((task) => task._id);
+        setSelectedTasks(new Set(taskIds));
+    };
+
+    const resetSelectedTasks = () => {
         setSelectedTasks(new Set());
     };
 
-    let newTaskTitle = "";
 
     return (
 
         <Container>
-            <Row className="justify-content-center m-3">
-                <Col className={styles.addTaskButton}>
+            <Row className="m-3">
+                <Col xs={12} sm={4} className="text-center mb-2">
                     <Button
                         className={styles.addButton}
                         onClick={() => setIsAddTaskModalOpen(true)}
                     >
                         Add new task
+                    </Button>
+                </Col>
+                <Col xs={12} sm={4} className="text-center mb-2">
+                    <Button
+                        className={styles.selectButton}
+                        onClick={selectAllTasks}
+                    >
+                        Select all
+                    </Button>
+                </Col>
+                <Col xs={12} sm={4} className="text-center mb2">
+                    <Button
+                        className={styles.resetButton}
+                        onClick={resetSelectedTasks}
+                    >
+                        Reset selected
                     </Button>
                 </Col>
             </Row>
@@ -103,6 +136,7 @@ function Todo() {
                             key={task._id}
                             onTaskDelete={setTaskToDelete}
                             onTaskSelect={onTaskSelect}
+                            checked={selectedTasks.has(task._id)}
                         />
                     );
                 })}

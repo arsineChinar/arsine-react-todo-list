@@ -1,35 +1,41 @@
-.card{
+.card {
     background-color: #dfeaf3;
     border-radius: 15px;
     margin-bottom: 17px;
 }
 
-.deleteButton{
+.deleteButton {
     margin-left: 10px;
     background-color: #22448c;
 }
 
-.editButton{
+.editButton {
     background-color: #5d93a5;
 }
 
 
-.actionButtons{
+.actionButtons {
     display: flex;
     justify-content: right;
 }
 
-.actionCheckbox{
+.actionCheckbox {
     display: flex;
     justify-content: right;
 }
 
-.selectTask{
+.selectTask {
     width: 18px;
     height: 18px;
     margin-bottom: 5px;
 }
 
-.selectTask input{
+.selectTask input {
     cursor: pointer;
+}
+
+.textElipsis {
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
 }

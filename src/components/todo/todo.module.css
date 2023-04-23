@@ -1,7 +1,11 @@
 .addButton{
+    background-color: #26396a;
+}
+
+.selectButton{
     background-color: #26428b;
 }
-.addTaskButton{
-    display: flex;
-    justify-content: center;
+
+.resetButton{
+    background-color: #5d93a5;
 }
