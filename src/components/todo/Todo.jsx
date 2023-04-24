@@ -5,6 +5,8 @@ import ConfirmDialog from "../confirmDialog/ConfirmDialog";
 import DeleteSelected from "../deleteSelected/DeleteSelected";
 import TaskApi from "../../api/taskApi";
 import TaskModal from "../taskModal/TaskModal";
+import NavBar from "../navBar/NavBar";
+import Filters from "../filters/Filters";
 import { Container, Row, Col, Button } from "react-bootstrap";
 import styles from "./todo.module.css";
 
@@ -16,17 +18,28 @@ function Todo() {
     const [selectedTasks, setSelectedTasks] = useState(new Set());
     const [taskToDelete, setTaskToDelete] = useState(null);
     const [isAddTaskModalOpen, setIsAddTaskModalOpen] = useState(false);
+    const [editableTask, setEditableTask] = useState(null);
+
+    const getTasks = (filters) => {
+        taskApi
+            .getAll(filters)
+            .then((tasks) => {
+                setTasks(tasks);
+            })
+            .catch((err) => {
+                toast.error(err.message);
+            });
+    };
 
     useEffect(() => {
-        taskApi.getAll().then((tasks) => {
-            setTasks(tasks);
-        });
+        getTasks();
     }, []);
 
 
     const onAddNewTask = (newTask) => {
 
-        taskApi.add(newTask)
+        taskApi
+            .add(newTask)
             .then((task) => {
                 const tasksCopy = [...tasks];
                 tasksCopy.push(task);
@@ -97,12 +110,34 @@ function Todo() {
         setSelectedTasks(new Set());
     };
 
+    const onEditTask = (editedTask) => {
+        taskApi
+            .update(editedTask)
+            .then((task) => {
+                const newTasks = [...tasks];
+                const foundIndex = newTasks.findIndex((t) => t._id === task._id);
+                newTasks[foundIndex] = task;
+                toast.info(`Task has been updated successfully!`);
+                setTasks(newTasks);
+                setEditableTask(null);
+            })
+            .catch((err) => {
+                toast.error(err.message);
+            });
+    };
+
+    const onFilter = (filters) => {
+        getTasks(filters);
+    };
 
     return (
 
         <Container>
-            <Row className="m-3">
-                <Col xs={12} sm={4} className="text-center mb-2">
+            <Row>
+                <NavBar />
+            </Row>
+            <Row className={`${styles.buttonsLocation} mb-2`}>
+                <Col xs={4} className={`${styles.location} mb-2`}>
                     <Button
                         className={styles.addButton}
                         onClick={() => setIsAddTaskModalOpen(true)}
@@ -110,7 +145,7 @@ function Todo() {
                         Add new task
                     </Button>
                 </Col>
-                <Col xs={12} sm={4} className="text-center mb-2">
+                <Col xs={4} className={`${styles.location} mb-2`}>
                     <Button
                         className={styles.selectButton}
                         onClick={selectAllTasks}
@@ -118,7 +153,7 @@ function Todo() {
                         Select all
                     </Button>
                 </Col>
-                <Col xs={12} sm={4} className="text-center mb2">
+                <Col xs={4} className={`${styles.location} mb-2`}>
                     <Button
                         className={styles.resetButton}
                         onClick={resetSelectedTasks}
@@ -127,7 +162,9 @@ function Todo() {
                     </Button>
                 </Col>
             </Row>
-
+            <Row>
+                <Filters onFilter={onFilter} />
+            </Row>
             <Row>
                 {tasks.map((task) => {
                     return (
@@ -136,7 +173,9 @@ function Todo() {
                             key={task._id}
                             onTaskDelete={setTaskToDelete}
                             onTaskSelect={onTaskSelect}
+                            onTaskEdit={setEditableTask}
                             checked={selectedTasks.has(task._id)}
+                            onStatusChange={onEditTask}
                         />
                     );
                 })}
@@ -157,12 +196,20 @@ function Todo() {
                 />
             )}
             {
-                isAddTaskModalOpen &&
-                <TaskModal
-                    onCancel={() => setIsAddTaskModalOpen(false)}
-                    onSave={onAddNewTask}
-                />
-            }
+                isAddTaskModalOpen && (
+                    <TaskModal
+                        onCancel={() => setIsAddTaskModalOpen(false)}
+                        onSave={onAddNewTask}
+                    />
+                )}
+            {
+                editableTask && (
+                    <TaskModal
+                        onCancel={() => setEditableTask(null)}
+                        onSave={onEditTask}
+                        data={editableTask}
+                    />
+                )}
             <ToastContainer
                 position="bottom-left"
                 autoClose={3000}

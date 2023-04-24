@@ -5,14 +5,22 @@
 }
 
 .deleteButton {
-    margin-left: 10px;
+    margin-left: 7px;
     background-color: #22448c;
 }
 
 .editButton {
+    margin-left: 7px;
     background-color: #5d93a5;
 }
 
+.doneButton {
+    background-color: #1a7bb8;
+}
+
+.activeButton {
+    background-color: #4f66bb;
+}
 
 .actionButtons {
     display: flex;
