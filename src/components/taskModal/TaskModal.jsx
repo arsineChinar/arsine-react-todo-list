@@ -1,6 +1,7 @@
-import { useState, useEffect } from "react";
+import { memo, useState, useEffect } from "react";
 import PropTypes from 'prop-types';
 import DatePicker from 'react-datepicker';
+import { formatDate } from "../../utils/helpers";
 import { Form, Button, Modal } from "react-bootstrap";
 import styles from "./taskModal.module.css";
 
@@ -12,19 +13,32 @@ function TaskModal(props) {
     const [date, setDate] = useState(new Date());
     const [isTitleValid, setIsTitleValid] = useState(false);
 
+    useEffect(() => {
+        const { data } = props;
+        if (data) {
+            setTitle(data.title);
+            setDescription(data.description); 
+            setDate(data.date ? new Date(data.date) : new Date());
+            setIsTitleValid(true);
+        }
+    }, [props]);
+
     const saveTask = () => {
         const newTask = {
             title: title.trim(),
             description: description.trim(),
-            date: date.toISOString().slice(0, 10)
-          };
-            props.onSave(newTask);
+            date: formatDate(date)
+        };
+        if(props.data){
+            newTask._id = props.data._id;
+          }
+        props.onSave(newTask);
     };
 
     const onTitleChange = (event) => {
-        const {value} = event.target;
+        const { value } = event.target;
         const trimmedTitle = value.trim();
-    
+
         setIsTitleValid(!!trimmedTitle);
         setTitle(value);
     };
@@ -86,7 +100,8 @@ function TaskModal(props) {
 
 TaskModal.propTypes = {
     onCancel: PropTypes.func.isRequired,
-    onSave: PropTypes.func.isRequired
+    onSave: PropTypes.func.isRequired,
+    data: PropTypes.object,
 };
 
-export default TaskModal;
+export default memo(TaskModal);

@@ -1,0 +1,24 @@
+.form {
+    width: calc(100% - 40px);
+}
+
+.filterItem {
+    font-size: 15px;
+}
+
+.filterItem>legend {
+    font-size: 20px;
+}
+
+.searchButton {
+    background-color: #4c79c7;
+
+}
+
+.resetButton {
+    background-color: #5d93a5;
+}
+
+.filter, .header> :nth-child(1) {
+    background-color: #a6bbcd;
+}
