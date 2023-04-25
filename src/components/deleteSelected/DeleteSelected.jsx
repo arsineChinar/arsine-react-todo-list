@@ -40,6 +40,6 @@ DeleteSelected.propTypes = {
     disabled: PropTypes.bool.isRequired,
     tasksCount: PropTypes.number.isRequired,
     onSubmit: PropTypes.func.isRequired,
-    };
+};
 
-export default memo (DeleteSelected);
+export default memo(DeleteSelected);
