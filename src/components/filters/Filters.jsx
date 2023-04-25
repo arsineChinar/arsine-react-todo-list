@@ -90,7 +90,7 @@ function Filters(props) {
     return (
         <Accordion className="mb-4">
             <Accordion.Item eventKey="0">
-                <Accordion.Header>
+                <Accordion.Header className={styles.header}>
                     <Form
                         className={`${styles.form} d-flex`}
                         onClick={(event) => event.stopPropagation()}
@@ -119,7 +119,7 @@ function Filters(props) {
                         </span>
                     </Form>
                 </Accordion.Header>
-                <Accordion.Body>
+                <Accordion.Body className={styles.filter}>
                     <Container fluid={true}>
                         <Row>
                             {dateOptions.map((dateOption) => {

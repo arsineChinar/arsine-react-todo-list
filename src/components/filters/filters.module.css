@@ -1,11 +1,12 @@
-.form{
+.form {
     width: calc(100% - 40px);
 }
 
-.filterItem{
+.filterItem {
     font-size: 15px;
 }
-.filterItem>legend{
+
+.filterItem>legend {
     font-size: 20px;
 }
 
@@ -18,3 +19,6 @@
     background-color: #5d93a5;
 }
 
+.filter, .header> :nth-child(1) {
+    background-color: #a6bbcd;
+}
