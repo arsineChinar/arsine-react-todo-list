@@ -24,7 +24,7 @@ export default class TaskApi {
             let query = '?';
             Object.entries(filters).forEach(([key, value]) => {
                 if (!value) {
-                    return; 
+                    return;
                 }
                 query += `${key}=${value}&`;
             });
@@ -39,7 +39,7 @@ export default class TaskApi {
                 }
                 return data;
             });
-    }
+    };
 
     getAll(filters) {
         return this.#request("GET", { filters: filters });

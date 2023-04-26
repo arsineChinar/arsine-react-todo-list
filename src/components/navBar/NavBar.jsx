@@ -6,7 +6,7 @@ import Navbar from "react-bootstrap/Navbar";
 
 function NavBar() {
     return (
-        <Navbar  expand="sm">
+        <Navbar expand="sm">
             <Container fluid>
                 <Navbar.Brand href="#">Todo</Navbar.Brand>
                 <Navbar.Toggle aria-controls="navbarScroll" />

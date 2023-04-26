@@ -17,7 +17,7 @@ function TaskModal(props) {
         const { data } = props;
         if (data) {
             setTitle(data.title);
-            setDescription(data.description); 
+            setDescription(data.description);
             setDate(data.date ? new Date(data.date) : new Date());
             setIsTitleValid(true);
         }
@@ -29,9 +29,9 @@ function TaskModal(props) {
             description: description.trim(),
             date: formatDate(date)
         };
-        if(props.data){
+        if (props.data) {
             newTask._id = props.data._id;
-          }
+        }
         props.onSave(newTask);
     };
 
