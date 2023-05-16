@@ -1,12 +1,11 @@
 import { useState, useEffect } from "react";
 import { ToastContainer, toast } from "react-toastify";
-import Task from "../task/Task";
-import ConfirmDialog from "../confirmDialog/ConfirmDialog";
-import DeleteSelected from "../deleteSelected/DeleteSelected";
+import Task from "../../components/task/Task";
+import ConfirmDialog from "../../components/confirmDialog/ConfirmDialog";
+import DeleteSelected from "../../components/deleteSelected/DeleteSelected";
 import TaskApi from "../../api/taskApi";
-import TaskModal from "../taskModal/TaskModal";
-import NavBar from "../navBar/NavBar";
-import Filters from "../filters/Filters";
+import TaskModal from "../../components/taskModal/TaskModal";
+import Filters from "../../components/filters/Filters";
 import { Container, Row, Col, Button } from "react-bootstrap";
 import styles from "./todo.module.css";
 
@@ -134,7 +133,7 @@ function Todo() {
 
         <Container>
             <Row>
-                <NavBar />
+               
             </Row>
             <Row className={`${styles.buttonsLocation} mb-2`}>
                 <Col xs={4} className={`${styles.location} mb-2`}>
